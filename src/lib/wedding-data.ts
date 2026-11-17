@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createMiddleware, createServerFn } from "@tanstack/react-start";
 import { getSql } from "@/lib/db";
 import { authMiddleware } from "@/lib/auth/middleware";
 
@@ -123,8 +123,19 @@ export const removeRegistryItem = createServerFn({ method: "POST" })
     return { removed: rows.length > 0 };
   });
 
+const viewer = createMiddleware({ type: "function" })
+  .client(async ({ next }) => {
+    const { getBearerToken } = await import("@/lib/auth/client");
+    return next({ sendContext: { bearerToken: getBearerToken() ?? undefined } });
+  })
+  .server(async ({ next, context }) => {
+    const { getSessionUser } = await import("@/lib/auth/verify.server");
+    const user = await getSessionUser(context.bearerToken).catch(() => null);
+    return next({ context: { userId: user?.id ?? null } });
+  });
+
 export const listGallery = createServerFn({ method: "GET" })
-  .middleware([authMiddleware])
+  .middleware([viewer])
   .handler(async ({ context }) => {
     const sql = await getSql();
     const rows = await sql<{

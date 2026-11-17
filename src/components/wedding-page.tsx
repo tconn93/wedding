@@ -333,7 +333,7 @@ export function WeddingPage() {
           <div className="mx-auto max-w-xl px-5 py-16 sm:py-24">
             <h2 className="font-display text-4xl text-ink sm:text-5xl">Gallery</h2>
             <p className="mt-4 text-mist">
-              Pictures from the day. Add one and it stays here, with your name and the file it came from.
+              Pictures from the day. Anyone can look. Sign in only if you want to add one.
             </p>
             <div className="mt-8">
               <GalleryPanel />

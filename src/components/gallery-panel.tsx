@@ -61,7 +61,6 @@ export function GalleryPanel() {
   }, [user]);
 
   useEffect(() => {
-    if (!user) return;
     let cancel = false;
     listGallery()
       .then((next) => {
@@ -73,23 +72,7 @@ export function GalleryPanel() {
     return () => {
       cancel = true;
     };
-  }, [user]);
-
-  if (isPending) return <div className="h-40 animate-pulse border border-line bg-paper" />;
-
-  if (!user) {
-    return (
-      <div className="border border-line bg-paper px-5 py-8 sm:px-8">
-        <h3 className="font-display text-3xl text-ink">Sign in to add a photo</h3>
-        <p className="mt-3 text-mist">
-          Google keeps the album to people who were invited. Your name stays on the picture you add.
-        </p>
-        <div className="mt-6">
-          <GoogleSignIn callbackURL="/#gallery" />
-        </div>
-      </div>
-    );
-  }
+  }, [user?.id]);
 
   async function upload(event: FormEvent) {
     event.preventDefault();
@@ -126,50 +109,12 @@ export function GalleryPanel() {
 
   return (
     <div className="space-y-10">
-      <form onSubmit={(event) => void upload(event)} className="border border-line bg-paper px-5 py-8 sm:px-8" noValidate>
-        <h3 className="font-display text-3xl text-ink">Add a photo</h3>
-        <p className="mt-2 text-mist">We keep the picture, your name, the file name, and the size.</p>
-        <label className="mt-6 block">
-          <span className="text-xs uppercase tracking-widest text-mist">Your name</span>
-          <input
-            value={guestName}
-            onChange={(event) => setGuestName(event.target.value)}
-            className={fieldClass}
-            maxLength={80}
-            required
-          />
-        </label>
-        <label className="mt-6 block">
-          <span className="text-xs uppercase tracking-widest text-mist">Caption</span>
-          <input value={caption} onChange={(event) => setCaption(event.target.value)} className={fieldClass} maxLength={160} />
-        </label>
-        <label className="mt-6 inline-flex min-h-12 cursor-pointer items-center justify-center rounded-full border border-line px-6 text-ink transition-transform duration-150 ease-out active:scale-[0.96]">
-          {file ? file.name : "Choose a photo"}
-          <input
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-          />
-        </label>
-        {error && (
-          <p role="alert" className="mt-4 text-sm text-ink">
-            {error}
-          </p>
-        )}
-        <button
-          type="submit"
-          disabled={saving}
-          className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-tide px-6 text-paper transition-[transform,background-color] duration-150 ease-out hover:bg-ink active:scale-[0.96] disabled:opacity-70"
-        >
-          {saving ? "Saving…" : "Save to the gallery"}
-        </button>
-      </form>
-
-      {photos === null ? (
+      {photos === null && !error ? (
         <div className="h-40 animate-pulse bg-line" />
-      ) : photos.length === 0 ? (
-        <p className="text-mist">No photos yet. After the wedding, this is where they go.</p>
+      ) : !photos || photos.length === 0 ? (
+        <p className={error ? "text-ink" : "text-mist"} role={error ? "alert" : undefined}>
+          {error ?? "No photos yet. After the wedding, this is where they go."}
+        </p>
       ) : (
         <ul className="grid grid-cols-2 gap-3">
           {photos.map((photo) => (
@@ -198,6 +143,58 @@ export function GalleryPanel() {
             </li>
           ))}
         </ul>
+      )}
+
+      {isPending ? (
+        <div className="h-24 animate-pulse border border-line bg-paper" />
+      ) : user ? (
+        <form onSubmit={(event) => void upload(event)} className="border border-line bg-paper px-5 py-8 sm:px-8" noValidate>
+          <h3 className="font-display text-3xl text-ink">Add a photo</h3>
+          <p className="mt-2 text-mist">We keep the picture, your name, the file name, and the size.</p>
+          <label className="mt-6 block">
+            <span className="text-xs uppercase tracking-widest text-mist">Your name</span>
+            <input
+              value={guestName}
+              onChange={(event) => setGuestName(event.target.value)}
+              className={fieldClass}
+              maxLength={80}
+              required
+            />
+          </label>
+          <label className="mt-6 block">
+            <span className="text-xs uppercase tracking-widest text-mist">Caption</span>
+            <input value={caption} onChange={(event) => setCaption(event.target.value)} className={fieldClass} maxLength={160} />
+          </label>
+          <label className="mt-6 inline-flex min-h-12 cursor-pointer items-center justify-center rounded-full border border-line px-6 text-ink transition-transform duration-150 ease-out active:scale-[0.96]">
+            {file ? file.name : "Choose a photo"}
+            <input
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+            />
+          </label>
+          {error && (
+            <p role="alert" className="mt-4 text-sm text-ink">
+              {error}
+            </p>
+          )}
+          <button
+            type="submit"
+            disabled={saving}
+            className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-tide px-6 text-paper transition-[transform,background-color] duration-150 ease-out hover:bg-ink active:scale-[0.96] disabled:opacity-70"
+          >
+            {saving ? "Saving…" : "Save to the gallery"}
+          </button>
+        </form>
+      ) : (
+        <div className="border border-line bg-paper px-5 py-8 sm:px-8">
+          <h3 className="font-display text-3xl text-ink">Sign in to add a photo</h3>
+          <p className="mt-3 text-mist">Looking is open. Google is only for putting a picture in.</p>
+          <div className="mt-6">
+            <GoogleSignIn callbackURL="/#gallery" />
+          </div>
+        </div>
       )}
     </div>
   );
