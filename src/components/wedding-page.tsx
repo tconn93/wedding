@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ReplyBook } from "@/components/reply-book";
 import { RsvpForm } from "@/components/rsvp-form";
+import { GalleryPanel } from "@/components/gallery-panel";
+import { RegistryPanel } from "@/components/registry-panel";
 import { GoogleSignIn } from "@/components/google-sign-in";
 import { UserButton } from "@/lib/auth/gates";
 import { useCurrentUser, useCurrentUserState } from "@/lib/auth/use-current-user";
 import {
   couple,
-  coupleTitle,
   decodeReply,
   loadBook,
   MINE_KEY,
@@ -23,10 +24,10 @@ import {
 } from "@/lib/wedding";
 
 const schedule = [
-  { time: "4:00", title: "Ceremony", detail: "Vows with the water behind us." },
-  { time: "5:00", title: "Cocktails", detail: "Cold drinks. Warm sand. Speeches can wait." },
-  { time: "6:15", title: "Dinner", detail: "A long table. Stay through dessert." },
-  { time: "8:00", title: "Dancing", detail: "The good songs. Shoes are optional." },
+  { title: "Ceremony", detail: "Vows with the water behind us." },
+  { title: "Cocktails", detail: "Cold drinks. Warm sand. Speeches can wait." },
+  { title: "Dinner", detail: "A long table. Stay through dessert." },
+  { title: "Dancing", detail: "The good songs. Shoes are optional." },
 ];
 
 const facts = [
@@ -115,8 +116,11 @@ export function WeddingPage() {
             <a className="text-sm text-mist transition-colors duration-150 hover:text-ink" href="#coast">
               The coast
             </a>
-            <a className="text-sm text-mist transition-colors duration-150 hover:text-ink" href="#book">
-              The book
+            <a className="text-sm text-mist transition-colors duration-150 hover:text-ink" href="#registry">
+              Registry
+            </a>
+            <a className="text-sm text-mist transition-colors duration-150 hover:text-ink" href="#gallery">
+              Gallery
             </a>
           </nav>
           <div className="flex items-center gap-2">
@@ -142,17 +146,16 @@ export function WeddingPage() {
           </div>
           <div className="flex flex-col justify-center px-5 py-12 sm:px-10 lg:order-first lg:px-14 lg:py-16">
             <p className="rise text-xs uppercase tracking-widest text-mist">You’re invited</p>
-            <h1 className="rise rise-2 mt-4 font-display text-6xl leading-none text-ink sm:text-7xl">
-              {coupleTitle()}
+            <h1 className="rise rise-2 mt-4 font-display text-5xl leading-none text-ink sm:text-6xl">
+              <span className="block">{couple.first}</span>
+              <span className="mt-2 block">& {couple.second}</span>
             </h1>
-            <p className="rise rise-3 mt-4 font-display text-3xl italic text-tide">
-              {couple.second ? "are getting married" : "is getting married"}
-            </p>
+            <p className="rise rise-3 mt-4 font-display text-3xl italic text-tide">are getting married</p>
             <p className="mt-6 font-display text-4xl leading-none text-ink">
               April 10
               <span className="ml-3 align-middle text-xl text-mist">2027</span>
             </p>
-            <p className="mt-2 text-mist">Four in the afternoon, Central time · Gulf Coast</p>
+            <p className="mt-2 text-mist">Gulf Coast</p>
             <div className="mt-8 grid min-h-16 max-w-sm grid-cols-3 border-y border-line">
               {countdown ? (
                 <>
@@ -217,17 +220,12 @@ export function WeddingPage() {
         <section id="plan" className="scroll-mt-20 border-t border-line">
           <div className="mx-auto max-w-xl px-5 py-16 sm:py-24">
             <h2 className="font-display text-4xl text-ink sm:text-5xl">The day</h2>
-            <p className="mt-4 text-mist">Central time, on the water.</p>
+            <p className="mt-4 text-mist">The order of the day. Hours are not set yet.</p>
             <ol className="mt-8">
               {schedule.map((item) => (
-                <li key={item.title} className="flex gap-5 border-t border-line py-6">
-                  <p className="w-16 shrink-0 pt-1 font-display text-xl tabular-nums text-tide">
-                    {item.time}
-                  </p>
-                  <div>
-                    <h3 className="font-display text-3xl text-ink">{item.title}</h3>
-                    <p className="mt-1 text-mist">{item.detail}</p>
-                  </div>
+                <li key={item.title} className="border-t border-line py-6">
+                  <h3 className="font-display text-3xl text-ink">{item.title}</h3>
+                  <p className="mt-1 text-mist">{item.detail}</p>
                 </li>
               ))}
             </ol>
@@ -292,7 +290,7 @@ export function WeddingPage() {
               </p>
               <p>
                 <span className="block text-xs uppercase tracking-widest text-mist">Saturday</span>
-                <span className="mt-2 block text-ink">The wedding. Arrive a little early. Stay late.</span>
+                <span className="mt-2 block text-ink">The wedding. Hours still to come. Stay late.</span>
               </p>
               <p>
                 <span className="block text-xs uppercase tracking-widest text-mist">Sunday</span>
@@ -300,6 +298,18 @@ export function WeddingPage() {
                   Coffee and a walk on the beach, if you are not flying out at dawn.
                 </span>
               </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="registry" className="scroll-mt-20 border-t border-line">
+          <div className="mx-auto max-w-xl px-5 py-16 sm:py-24">
+            <h2 className="font-display text-4xl text-ink sm:text-5xl">Registry</h2>
+            <p className="mt-4 text-mist">
+              The gift is that you come. If you want to send something, these are the links we have picked.
+            </p>
+            <div className="mt-8">
+              <RegistryPanel />
             </div>
           </div>
         </section>
@@ -314,9 +324,20 @@ export function WeddingPage() {
               <ReplyAccess mine={mine} onSave={save} />
             </div>
             <p className="mt-6 text-sm text-mist">
-              The gift is that you come. A card is plenty if you want to send something. A registry
-              will live here when there is one.
+              A card is plenty. The registry is above, if you would rather send a gift.
             </p>
+          </div>
+        </section>
+
+        <section id="gallery" className="scroll-mt-20 border-t border-line">
+          <div className="mx-auto max-w-xl px-5 py-16 sm:py-24">
+            <h2 className="font-display text-4xl text-ink sm:text-5xl">Gallery</h2>
+            <p className="mt-4 text-mist">
+              Pictures from the day. Add one and it stays here, with your name and the file it came from.
+            </p>
+            <div className="mt-8">
+              <GalleryPanel />
+            </div>
           </div>
         </section>
 
@@ -337,7 +358,7 @@ export function WeddingPage() {
             <h2 className="font-display text-4xl text-ink sm:text-5xl">Questions</h2>
             <div className="mt-8 border-t border-line">
               <Faq q="Where exactly?" a="On the Gulf, around Pensacola. The street address goes out with the invitation and will be added here once it is final." />
-              <Faq q="What time should we arrive?" a="The ceremony is set for four in the afternoon, Central time. Come a little before. We will not start without the people who said they were coming." />
+              <Faq q="What time should we arrive?" a="The hours are not set yet. They will be added here, and in a note, once we know them. Plan on the day itself." />
               <Faq q="Can I bring someone?" a="The reply is for the household on your invitation. Add every name in your party so we set enough places." />
               <Faq q="What will we eat?" a="Gulf fish, herb chicken, or a garden plate. Tell us which, and mention allergies in the note." />
               <Faq q="Is there a room block?" a="Not yet. Stay near Pensacola Beach if you can. We will post a block here if we reserve one." />

@@ -1,9 +1,10 @@
 export const couple: { first: string; second: string } = {
-  first: "Tyler",
-  second: "",
+  first: "Tyler Conner",
+  second: "Rose Abrao",
 };
 
-export const WEDDING_AT = new Date("2027-04-10T16:00:00-05:00");
+/** Start of the wedding day. The hour is not set yet. */
+export const WEDDING_AT = new Date("2027-04-10T00:00:00-05:00");
 export const WEDDING_DATE_LABEL = "April 10, 2027";
 export const RSVP_BY_LABEL = "March 10, 2027";
 

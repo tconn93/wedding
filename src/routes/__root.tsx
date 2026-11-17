@@ -3,7 +3,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import appCss from "../styles.css?url";
 
-const APP_NAME = "Tyler · April 10";
+const APP_NAME = "Tyler & Rose · April 10";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -14,7 +14,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "An invitation and reply card for Tyler’s wedding on April 10, 2027, on the Gulf Coast.",
+          "An invitation for Tyler Conner and Rose Abrao, April 10, 2027, on the Gulf Coast.",
       },
       { name: "theme-color", content: "#f3efe7" },
     ],
